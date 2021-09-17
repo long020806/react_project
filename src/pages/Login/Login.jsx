@@ -3,6 +3,7 @@ import "./Login.less"//需下载less和less-loader 注意less-loader版本为5.0
 import logo from "./images/logo.png"
 import {Form,Input,Button} from "antd"
 import {UserOutlined,LockOutlined} from '@ant-design/icons'
+import { reqLogin } from '../../api'
 /**
  * 登录路由组件
  */
@@ -10,10 +11,18 @@ import {UserOutlined,LockOutlined} from '@ant-design/icons'
  * input验证在其父级Form.Item添加name和rules属性
  */
 export default class Login extends Component {
-    onFinish =(values)=>{
+    onFinish =async (values)=>{
         console.log("finish",values)
-        const {push} = this.props.history;
-        push("/");
+        // const {push} = this.props.history;
+        // push("/");
+        try{
+            const {username,password} = values;
+            const res = await reqLogin(username,password);
+            console.log(res)
+        }catch(err){
+            console.log("请求失败",err)
+        }
+
     }
     validatePwd = (_,value)=>{
         const reg = /^[a-zA-Z0-9_]+$/
