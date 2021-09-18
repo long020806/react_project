@@ -6,3 +6,7 @@ import ajax from "./ajax"
 export const reqLogin  = (username,password) =>ajax("/api1/login",{username,password},"POST");
 //添加用户
 export const reqAddUser = (user)=>ajax("/api1/manage/user/add",user,"POST")
+//查询天气
+export const reqWeather = (city)=>{return new Promise((resolve,reject)=>{
+    resolve({dayPictureUrl:"http://api.map.baidu.com/images/weather/day/qing.png",weather:"晴"})
+})}

@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
 import "./Login.less"//需下载less和less-loader 注意less-loader版本为5.0
-import logo from "./images/logo.png"
+import logo from "../../assets/images/logo.png"
 import {Form,Input,Button} from "antd"
 import {UserOutlined,LockOutlined} from '@ant-design/icons'
 import { reqLogin } from '../../api'
+import { message } from 'antd';
+import MemoryUtils from '../../utils/MemoryUtils'
+import StorageUtils from '../../utils/StorageUtils'
+import { Redirect } from 'react-router'
 /**
  * 登录路由组件
  */
@@ -12,15 +16,18 @@ import { reqLogin } from '../../api'
  */
 export default class Login extends Component {
     onFinish =async (values)=>{
-        console.log("finish",values)
-        // const {push} = this.props.history;
-        // push("/");
-        try{
-            const {username,password} = values;
-            const res = await reqLogin(username,password);
-            console.log(res)
-        }catch(err){
-            console.log("请求失败",err)
+        // console.log("finish",values)
+        const {username,password} = values;
+        const res= await reqLogin(username,password);    
+        console.log("请求成功",res)
+        if(res.status===0){
+            const user = res.data;
+            MemoryUtils.user = user;
+            StorageUtils.saveUser(user);
+            message.success("登陆成功");
+            this.props.history.replace("/");
+        }else{
+            message.error(res.msg);
         }
 
     }
@@ -37,7 +44,12 @@ export default class Login extends Component {
         }
     }
     render() {
-        console.log(this.props)
+        // console.log(this.props)
+        //判断用户是否登录，如果已经登陆跳转管理界面
+        const {user} = MemoryUtils;
+        if(user&&user._id){
+            return <Redirect to="/"/>
+        }
         return (
             <div className="login">
                 <header className="login-header">
@@ -64,7 +76,8 @@ export default class Login extends Component {
                             />
                         </Form.Item>
                         <Form.Item >
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button type="primary" htmlTy
+                            pe="submit" className="login-form-button">
                                 Log in
                             </Button>
                         </Form.Item>

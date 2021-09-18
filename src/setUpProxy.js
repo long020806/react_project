@@ -1,3 +1,6 @@
+/**
+ * 此文件需放置在src目录下
+ */
 const proxy = require('http-proxy-middleware');
 
 module.exports = function(app){
