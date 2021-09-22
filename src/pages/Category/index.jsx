@@ -31,8 +31,8 @@ export default class Category extends Component {
                 width:300,
                 render: (category)=>(
                     <span>
-                      <LinkButton onClick={()=>{this.showUpdateModal(category)}}>修改分类</LinkButton>
-                      {this.state.parentId==="0"?<LinkButton onClick={()=>{this.showSubCategories(category)}}>查看子分类</LinkButton>:null}
+                      <LinkButton onClick={()=>this.showUpdateModal(category)}>修改分类</LinkButton>
+                      {this.state.parentId==="0"?<LinkButton onClick={()=>this.showSubCategories(category)}>查看子分类</LinkButton>:null}
                   </span>
               )
             },
@@ -64,8 +64,6 @@ export default class Category extends Component {
                 const {data:subCategories} = result;
                 this.setState({subCategories})
             }
-            
-
         }else{
             message.error("获取分类列表失败");
         }
@@ -74,8 +72,6 @@ export default class Category extends Component {
      * 相应取消：隐藏对话框
      */
     handleCancel = ()=>{
-        //清除输入数据
-        this.form.resetFields();
         //隐藏对话框
         this.setState({showStatus:0});
     }
@@ -89,23 +85,22 @@ export default class Category extends Component {
      * 更新分类
      */
     updateCategory = async ()=>{
-
         //隐藏对话框
         this.setState({showStatus:0});
         //准备数据
-        const categoryId = this.category["_id"];
-        const categoryName = this.form.getFieldValue("categoryName");
-        //清除输入数据
-        this.form.resetFields();
-  
-        //发请求   
-        const result = await reqUpdateCategory({categoryId,categoryName});
-        if(result.status===0){
-            //重新显示列表
-            this.getCatories();
-        }else{
-            message.error("修改分类失败")
-        }
+            const categoryId = this.category["_id"];
+            const categoryName = this.updateForm.formRef.getFieldValue("categoryName");
+
+    
+            //发请求   
+            const result = await reqUpdateCategory({categoryId,categoryName});
+            if(result.status===0){
+                //重新显示列表
+                this.getCatories();
+            }else{
+                message.error("修改分类失败")
+            }
+
     }
     /**
      * 展示添加分类对话框
@@ -122,10 +117,8 @@ export default class Category extends Component {
         //更新状态
         this.setState({showStatus:2});
     }
-    UNSAFE_componentWillMount(){
-        this.getColumns();
-    }
     componentDidMount(){
+        this.getColumns();
         this.getCatories();
     }
     render() {
@@ -148,9 +141,7 @@ export default class Category extends Component {
                     <AddForm></AddForm>
                 </Modal>
                 <Modal title="修改分类" visible={showStatus===2} onOk={this.updateCategory} onCancel={this.handleCancel}>
-                    <UpdateForm categoryName={category.name} setForm={(form)=>{
-                        this.form = form;
-                    }}></UpdateForm>
+                    <UpdateForm categoryName={category.name} ref={(c)=>(this.updateForm = c)}></UpdateForm>
                 </Modal>
            </Card>
             )

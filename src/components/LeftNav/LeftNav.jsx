@@ -52,18 +52,15 @@ class LeftNav extends Component {
     // static getDerivedStateFromProps(nextPropx,prevState){
     //     return null;
     // }
-    UNSAFE_componentWillMount(){
+    componentDidMount(){
+        // if(this.state.first){
+        //     console.log(1)
+        //     this.setState({first:false})
         this.menuNodes = this.getMenuNodes_map(menuList);
+        this.setState({});
 
+        // }
     }
-    // componentDidMount(){
-    //     // if(this.state.first){
-    //     //     console.log(1)
-    //     //     this.setState({first:false})
-    //     this.setState({});
-
-    //     // }
-    // }
     render() {
         //得到当前请求的路由路径
         const {pathname} = this.props.location;
