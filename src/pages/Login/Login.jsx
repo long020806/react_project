@@ -19,7 +19,7 @@ export default class Login extends Component {
         // console.log("finish",values)
         const {username,password} = values;
         const res= await reqLogin(username,password);    
-        console.log("请求成功",res)
+        // console.log("请求成功",res)
         if(res.status===0){
             const user = res.data;
             MemoryUtils.user = user;
@@ -76,8 +76,7 @@ export default class Login extends Component {
                             />
                         </Form.Item>
                         <Form.Item >
-                            <Button type="primary" htmlTy
-                            pe="submit" className="login-form-button">
+                            <Button type="primary" htmlType="submit" className="login-form-button">
                                 Log in
                             </Button>
                         </Form.Item>

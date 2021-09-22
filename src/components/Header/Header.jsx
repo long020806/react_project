@@ -5,6 +5,11 @@ import MemoryUtils from '../../utils/MemoryUtils'
 import { reqWeather } from '../../api'
 import { withRouter } from 'react-router-dom'
 import menuList from '../../config/menuConfig'
+import LinkButton from '../LinkButton/LinkButton'
+import { Modal} from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import StorageUtils from "../../utils/StorageUtils"
+const { confirm } = Modal;
 /**
  * 头部组件
  */
@@ -15,7 +20,7 @@ class Header extends Component {
         weather:""
     }
     getTime=()=>{
-        setInterval(()=>{
+        this.intervalId = setInterval(()=>{
             const currentTime = formatDate(Date.now())
             this.setState({currentTime})
         },1000)
@@ -37,6 +42,26 @@ class Header extends Component {
         })
         return title;
     }
+    destroyAll = ()=>{
+        Modal.destroyAll();
+    }
+    logOut = ()=>{
+        confirm({
+            icon:<ExclamationCircleOutlined/>,
+            content:"确定退出吗",
+            onOk:()=>{
+                StorageUtils.removeUser();
+                MemoryUtils.user = {};
+                this.props.history.replace("/login")
+            },
+            onCancel:()=>{
+                console.log("cancel")
+            }
+        })
+    }
+
+
+
     /**
      * 第一次在render（）之后执行一次
      * 一般执行异步操作，发ajax请求/启动定时器
@@ -47,6 +72,12 @@ class Header extends Component {
         //获取当前天气
         this.getWeather();
     }
+    /**
+     * 当前组件卸载之前调用
+     */
+    componentWillUnmount(){
+        clearInterval(this.intervalId);
+    }
     render() {
         const {currentTime,dayPictureUrl,weather} = this.state;
         const {username} = MemoryUtils.user;
@@ -55,7 +86,7 @@ class Header extends Component {
             <div className="header">
                 <div className="header-top">
                     <span>欢迎，{username}</span> 
-                    <a href="javascript:">推出</a>
+                    <LinkButton onClick={this.logOut}>退出</LinkButton>
                 </div>
                 <div className="header-bottom">
                     <div className="header-bottom-left">

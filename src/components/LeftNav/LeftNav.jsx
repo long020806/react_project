@@ -52,25 +52,29 @@ class LeftNav extends Component {
     // static getDerivedStateFromProps(nextPropx,prevState){
     //     return null;
     // }
-    componentDidMount(){
-        // if(this.state.first){
-        //     console.log(1)
-        //     this.setState({first:false})
+    UNSAFE_componentWillMount(){
         this.menuNodes = this.getMenuNodes_map(menuList);
-        this.setState({});
 
-        // }
     }
+    // componentDidMount(){
+    //     // if(this.state.first){
+    //     //     console.log(1)
+    //     //     this.setState({first:false})
+    //     this.setState({});
+
+    //     // }
+    // }
     render() {
         //得到当前请求的路由路径
         const {pathname} = this.props.location;
-        const openKey = this.openKey;
+        const {isCollapsed} = this.props;
+        const openKey = isCollapsed?{}:this.openKey;
         return (
             <div>
             <div  className="left-nav">
-                    <Link to="/" className="left-nav-header"> 
+                    <Link to="/" onClick={this.props.toggleCollapsed} className="left-nav-header"> 
                         <img src={logo} alt="logo" />
-                        <h1>谷粒后台</h1>
+                        <h1 style={{display:isCollapsed?"none":""}}>谷粒后台</h1>
                     </Link>
 
                 </div>

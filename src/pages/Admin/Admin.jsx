@@ -17,15 +17,21 @@ const {Footer,Sider,Content} = Layout;
  * 后台管理路由组件
  */
 export default class Admin extends Component {
+    state = {isCollapsed:true}
+    toggleCollapsed = ()=>{
+        const {isCollapsed} = this.state;
+        this.setState({isCollapsed:!isCollapsed});
+    }
     render() {
         const {user} = MemoryUtils;
+        const {isCollapsed} = this.state;
         if(!user||!user._id){
             return <Redirect to="/login"></Redirect>
         }
         return (
         <Layout style={{height:"100%"}}>
-            <Sider>
-                <LeftNav></LeftNav>
+            <Sider collapsed={isCollapsed} >
+                <LeftNav isCollapsed = {isCollapsed} toggleCollapsed={this.toggleCollapsed}></LeftNav>
             </Sider>
             <Layout>
               <Header></Header>
