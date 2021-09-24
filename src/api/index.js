@@ -18,3 +18,14 @@ export const reqCategories = (parentId)=>ajax(prefix+"/manage/category/list",{pa
 export const reqAddCategory = (parentId,categoryName)=>ajax(prefix+"/manage/category/add",{parentId,categoryName},"POST");
 //更新分类
 export const reqUpdateCategory = ({categoryId,categoryName})=>ajax(prefix+"/manage/category/update",{categoryId,categoryName},"POST");
+//获取商品分页列表
+export const reqProducts = (pageNum,pageSize)=>ajax(prefix+"/manage/product/list",{pageNum,pageSize});
+// //根据商品名字获取搜索商品分页列表
+// export const reqProductsByName = (pageNum,pageSize,productName)=>ajax(prefix+"/manage/product/search",{pageNum,pageSize,productName})
+// //根据商品描述获取搜索商品分页列表
+// export const reqProductsByDesc = (pageNum,pageSize,productDesc)=>ajax(prefix+"/manage/product/search",{pageNum,pageSize,productDesc})
+export const reqSearchProducts = ({pageNum,pageSize,searchName,searchType})=>ajax(prefix+"/manage/product/search",{
+    pageNum,
+    pageSize,
+    [searchType]:searchName
+})

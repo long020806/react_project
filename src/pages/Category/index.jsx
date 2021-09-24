@@ -47,11 +47,15 @@ export default class Category extends Component {
     showCategories = ()=>{
         this.setState({parentId:"0",parentName:"",subCategories:[]})
     }
-    getCatories = async ()=>{
+    /**
+     * 异步获取一级/二级分类列表显示
+     * parentId:无参则为状态中的parentId有参则是指定parnetId
+     */
+    getCatories = async (parentId)=>{
         //再发送请求前显示loading
         this.setState({loading:true});
         //发异步ajax请求，获取数据
-        const {parentId} = this.state;
+        parentId = parentId || this.state.parentId;
         const result = await reqCategories(parentId);
         //请求响应时，隐藏loading
         this.setState({loading:false})
@@ -78,29 +82,67 @@ export default class Category extends Component {
     /**
      * 添加分类
      */
-    addCategory = ()=>{
+    addCategory = async ()=>{
+        //通过验证
+        try{
+            const validate = await this.addForm.form.validateFields();
+            //隐藏对话框
+            this.setState({showStatus:0})
+            //准备数据
+            const {parentId,categoryName} = validate;
+            //发送请求
+            const result = await reqAddCategory(parentId,categoryName);
+            if(result.status===0){
+                message.success("添加分类成功")
+                if(parentId===this.state.parentId)
+                    this.getCatories();
+                else if(parentId===0)//在二级分类列表重新获取一级分类，但不需要显示一级分类
+                    this.getCatories("0");
+    
+            }else{
+                console.log(result)
+                let msg = (result&&result.msg)||"添加分类失败";
+                message.error(msg)
+            }
+        }catch(err){
+            console.log(err);
+            return ;
+        }
+
+
 
     }
     /**
      * 更新分类
      */
     updateCategory = async ()=>{
-        //隐藏对话框
-        this.setState({showStatus:0});
-        //准备数据
+        //验证通过
+        try{
+            const validate = await this.updateForm.formRef.validateFields();
+            //隐藏对话框
+            this.setState({showStatus:0});
+            //准备数据
             const categoryId = this.category["_id"];
-            const categoryName = this.updateForm.formRef.getFieldValue("categoryName");
-
-    
+            const {categoryName} = validate;
             //发请求   
             const result = await reqUpdateCategory({categoryId,categoryName});
             if(result.status===0){
+                message.success('修改分类成功')
                 //重新显示列表
-                this.getCatories();
+                    this.getCatories();
             }else{
-                message.error("修改分类失败")
+                let msg = (result&&result.msg)||"修改分类失败";
+                message.error(msg)
             }
 
+        }catch(err){
+            console.log(err);
+            return ;
+        }
+
+        
+
+        
     }
     /**
      * 展示添加分类对话框
@@ -138,7 +180,7 @@ export default class Category extends Component {
             <Card title={title}  extra={extra}>
                 <Table dataSource={parentId==="0"?categories:subCategories} columns={columns} bordered={true} rowKey="_id" pagination={{defaultPageSize:5,showQuickJumper:true}} loading={loading}></Table>
                 <Modal title="添加分类" visible={showStatus===1} onOk={this.addCategory} onCancel={this.handleCancel}>
-                    <AddForm></AddForm>
+                    <AddForm categories={categories} parentId={parentId} ref={(c)=>this.addForm = c}></AddForm>
                 </Modal>
                 <Modal title="修改分类" visible={showStatus===2} onOk={this.updateCategory} onCancel={this.handleCancel}>
                     <UpdateForm categoryName={category.name} ref={(c)=>(this.updateForm = c)}></UpdateForm>
