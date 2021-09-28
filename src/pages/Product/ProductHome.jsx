@@ -8,13 +8,7 @@ const {Option} = Select
 
 export default class ProductHome extends Component {
     state = {
-        products:[{//商品信息
-            "name":"123",
-            "desc":"123",
-            "price":"123",
-            "_id":"1",
-            "status":"0"
-        }],
+        products:[],//商品信息
         total:0,//数据总数
         loading:false,
         searchName:"",//搜索关键字
@@ -53,7 +47,9 @@ export default class ProductHome extends Component {
         this.setState({loading:true});
         const {searchType,searchName} = this.state;
         let result;
-        if(search){
+        console.log(pageNum,search)
+
+        if(search===true){
             result = await reqSearchProducts({pageNum,PAGE_SIZE,searchName,searchType});
         }else{
             result = await reqProducts(pageNum,PAGE_SIZE);
@@ -62,6 +58,7 @@ export default class ProductHome extends Component {
         if(result.status===0){
             message.success("获取商品列表成功")
             const {total,list} = result.data;
+            console.log(result)
             this.setState({products:list,total})
         }else{
             message.error("获取商品列表失败");
@@ -71,8 +68,7 @@ export default class ProductHome extends Component {
     }
     componentDidMount(){
         this.initColumns();
-        this.getProducts();
-        // this.setState({})
+        this.getProducts(1);
     }
     render() {
         const {products,total,loading,searchName,searchType} = this.state;

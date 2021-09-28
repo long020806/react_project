@@ -29,4 +29,9 @@ export const reqSearchProducts = ({pageNum,pageSize,searchName,searchType})=>aja
     pageSize,
     [searchType]:searchName
 })
+//删除指定名称的图片
 export const reqDeleteImg = (name)=>ajax(prefix+"/manage/img/delete",{name},"POST")
+//添加/修改商品
+export const reqAddOrUpdateProduct = (product) => ajax(prefix+`/manage/product/${product._id?"update":"add"}`,product,"POST")
+//修改商品
+// export const reqUpdateProduct = (product) => ajax(prefix+"/manage/product/update","POST")

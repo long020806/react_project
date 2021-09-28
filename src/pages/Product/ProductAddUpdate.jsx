@@ -10,8 +10,9 @@ import {
 } from "antd";
 import LinkButton from '../../components/LinkButton/LinkButton';
 import {ArrowLeftOutlined} from "@ant-design/icons"
-import { reqCategories } from '../../api';
+import { reqAddOrUpdateProduct, reqCategories } from '../../api';
 import PicturesWall from './PicturesWall';
+import RichTextEditor from './RichTextEditor';
 const {Item} = Form;
 const {TextArea} = Input;
 /**
@@ -24,6 +25,7 @@ export default class ProductAddUpdate extends Component {
     constructor(props){
         super(props);
         this.pw = React.createRef();
+        this.editor = React.createRef();
     }
     /**
      * 异步获取一级/二级列表分类列表，并显示
@@ -69,10 +71,35 @@ export default class ProductAddUpdate extends Component {
         }
         this.setState({options})
     }
-    onFinish = (values)=>{
+    onFinish = async (values)=>{
+        //收集数据，封装product对象
+        const {name,desc,price,categoryIds} = values;
+        let pCategoryId,categoryId;
+        if( categoryIds.length===1){
+            pCategoryId="0";
+            categoryId=categoryIds[0];
+        }else{
+            pCategoryId=categoryIds[0];
+            categoryId=categoryIds[1];
+        }
         const imgs = this.pw.current.getImgs();
-        console.log(imgs);
-        console.log("111111",values)
+        const detail = this.editor.current.getEditorContent();
+        const product = {name,desc,price,pCategoryId,categoryId,imgs,detail};
+        //如果更新添加 _id 
+        if(this.isUpdate){
+            product._id = this.product._id;
+        }
+        //调用接口添加/更新
+        const res  = await reqAddOrUpdateProduct(product);
+
+        //根据结果显示
+        console.log(res)
+        if(res.status===0){
+            message.success(`${this.isUpdate?"更新":"添加"}商品成功`);
+            this.props.history.goBack();
+        }else{
+            message.error(`${this.isUpdate?"更新":"添加"}商品失败`);
+        }
     }
     validatePrice=(_,value)=>{
         console.log(value); 
@@ -116,7 +143,7 @@ export default class ProductAddUpdate extends Component {
     }
     render() {
         const {onFinish,loadData,validatePrice,isUpdate,product}=this;
-        const {pCategoryId,categoryId,imgs} = product;
+        const {pCategoryId,categoryId,imgs,detail} = product;
         const {options}= this.state;
         //用于接收级联分级Id的数组
         const categoryIds = [];
@@ -166,11 +193,11 @@ export default class ProductAddUpdate extends Component {
                     <Item label="商品图片" name="imgs">
                         <PicturesWall ref={this.pw} imgs={imgs}></PicturesWall>    
                     </Item>
-                    <Item label="商品详情">
-                        <div>商品详情</div>
+                    <Item label="商品详情" labelCol={{span:2}} wrapperCol={{span:20}}>
+                        <RichTextEditor ref={this.editor} detail={detail}></RichTextEditor>
                     </Item>
                     <Item>
-                        <Button type="primary" htmlType="submit">提交</Button>
+                        <Button type="primary" htmlType="submit" >提交</Button>
                     </Item>
                 </Form>
             </Card>
