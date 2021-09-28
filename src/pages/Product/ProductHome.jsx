@@ -42,7 +42,10 @@ export default class ProductHome extends Component {
             title:"操作",
             width:90,
             render:(product)=>(
-                <span><LinkButton>详情</LinkButton><LinkButton>修改</LinkButton></span>
+                <span>
+                    <LinkButton onClick={()=>{this.props.history.push("/product/detail",{product})}}>详情</LinkButton>
+                    <LinkButton onClick={()=>{this.props.history.push("/product/addupdate",product)}}>修改</LinkButton>
+                </span>
             )
         }]
     }
@@ -85,7 +88,7 @@ export default class ProductHome extends Component {
             </span>
         );
         const extra = (
-            <Button type="primary" icon={<PlusOutlined/>}>添加商品</Button>  
+            <Button onClick={()=>{this.props.history.push("/product/addupdate")}} type="primary" icon={<PlusOutlined/>}>添加商品</Button>  
         );
         return (
             <Card title={title} extra={extra} >
