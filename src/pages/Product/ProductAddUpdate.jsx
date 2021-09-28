@@ -21,6 +21,10 @@ export default class ProductAddUpdate extends Component {
     state={
         options:[],
     }
+    constructor(props){
+        super(props);
+        this.pw = React.createRef();
+    }
     /**
      * 异步获取一级/二级列表分类列表，并显示
      */
@@ -66,6 +70,8 @@ export default class ProductAddUpdate extends Component {
         this.setState({options})
     }
     onFinish = (values)=>{
+        const imgs = this.pw.current.getImgs();
+        console.log(imgs);
         console.log("111111",values)
     }
     validatePrice=(_,value)=>{
@@ -110,7 +116,7 @@ export default class ProductAddUpdate extends Component {
     }
     render() {
         const {onFinish,loadData,validatePrice,isUpdate,product}=this;
-        const {pCategoryId,categoryId} = product;
+        const {pCategoryId,categoryId,imgs} = product;
         const {options}= this.state;
         //用于接收级联分级Id的数组
         const categoryIds = [];
@@ -157,8 +163,8 @@ export default class ProductAddUpdate extends Component {
                             loadData={loadData}/**当选择某个列表项，加载下一个列表的监听回调 */
                         ></Cascader>
                     </Item>
-                    <Item label="商品图片">
-                        <PicturesWall></PicturesWall>    
+                    <Item label="商品图片" name="imgs">
+                        <PicturesWall ref={this.pw} imgs={imgs}></PicturesWall>    
                     </Item>
                     <Item label="商品详情">
                         <div>商品详情</div>

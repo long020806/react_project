@@ -29,3 +29,4 @@ export const reqSearchProducts = ({pageNum,pageSize,searchName,searchType})=>aja
     pageSize,
     [searchType]:searchName
 })
+export const reqDeleteImg = (name)=>ajax(prefix+"/manage/img/delete",{name},"POST")
