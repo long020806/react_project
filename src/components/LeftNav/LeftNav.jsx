@@ -14,7 +14,7 @@ class LeftNav extends Component {
         const {pathname} = this.props.location;
         return menuList.map(item=>{
                     if(item.children&&item.children.length!==0){
-                        const cItem  = item.children.find(cItem=>cItem.key===pathname)
+                        const cItem  = item.children.find(cItem=>pathname.indexOf(cItem.key)===0)
                         if(cItem) this.openKey = item.key;
                         return (
                             <SubMenu key={item.key} title={item.title} icon={React.createElement(item.icon)}>
@@ -63,9 +63,13 @@ class LeftNav extends Component {
     }
     render() {
         //得到当前请求的路由路径
-        const {pathname} = this.props.location;
+        let {pathname} = this.props.location;
         const {isCollapsed} = this.props;
+        if(pathname.indexOf("/product")===0){
+            pathname = "/product"
+        }
         const openKey = isCollapsed?{}:this.openKey;
+        
         return (
             <div>
             <div  className="left-nav">

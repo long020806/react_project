@@ -4,7 +4,6 @@ import {
     Form,
     Input,
     Cascader,
-    Upload,
     Button,
     message
 } from "antd";
@@ -143,7 +142,7 @@ export default class ProductAddUpdate extends Component {
     }
     render() {
         const {onFinish,loadData,validatePrice,isUpdate,product}=this;
-        const {pCategoryId,categoryId,imgs,detail} = product;
+        const {name,desc,price,pCategoryId,categoryId,imgs,detail} = product;
         const {options}= this.state;
         //用于接收级联分级Id的数组
         const categoryIds = [];
@@ -174,16 +173,16 @@ export default class ProductAddUpdate extends Component {
         return (
             <Card title={title}>
                 <Form {...layout} onFinish={onFinish}>
-                    <Item name="name" label="商品名称：" initialValue={product.name} rules={[{ required: true,message:"必须输入商品名称" }]}>
+                    <Item name="name" label="商品名称：" initialValue={name} rules={[{ required: true,message:"必须输入商品名称" }]}>
                         <Input placeholder="请输入商品名称"></Input>
                     </Item>
-                    <Item name="desc" label="商品描述：" initialValue={product.desc} rules={[{ required: true ,message:"必须输入商品描述" }]}>
+                    <Item name="desc" label="商品描述：" initialValue={desc} rules={[{ required: true ,message:"必须输入商品描述" }]}>
                         <TextArea placeholder="请输入商品描述" autoSize={{minRows:2,maxRows:6}}></TextArea>
                     </Item>
-                    <Item name="price" label="商品价格：" initialValue={product.price} rules={[{validator:validatePrice},{required:true,message:"必须输入商品价格"}]}>
+                    <Item name="price" label="商品价格：" initialValue={price} rules={[{validator:validatePrice},{required:true,message:"必须输入商品价格"}]}>
                         <Input type="number" placeholder="请输入商品价格" addonAfter="元"></Input>
                     </Item>
-                    <Item label="商品分类" name="categoryIds" initialValue={[]} rules={[{required:true,message:"必须选择商品分类"}]}>
+                    <Item label="商品分类" name="categoryIds" initialValue={categoryIds} rules={[{required:true,message:"必须选择商品分类"}]}>
                         <Cascader
                             placeholder="请指定商品分类"
                             options={options}/**需要显示的列表数组 */

@@ -18,8 +18,13 @@ export const reqCategories = (parentId)=>ajax(prefix+"/manage/category/list",{pa
 export const reqAddCategory = (parentId,categoryName)=>ajax(prefix+"/manage/category/add",{parentId,categoryName},"POST");
 //更新分类
 export const reqUpdateCategory = ({categoryId,categoryName})=>ajax(prefix+"/manage/category/update",{categoryId,categoryName},"POST");
+//获取一个分类
+export const reqCategory = (categoryId) => ajax(prefix+"/manage/category/info",{categoryId})
+//更新商品状态
+export const reqUpdateStatus = (productId,status)=>ajax(prefix+"manage/product/updateStatus",{productId,status},"POST")
 //获取商品分页列表
 export const reqProducts = (pageNum,pageSize)=>ajax(prefix+"/manage/product/list",{pageNum,pageSize});
+
 // //根据商品名字获取搜索商品分页列表
 // export const reqProductsByName = (pageNum,pageSize,productName)=>ajax(prefix+"/manage/product/search",{pageNum,pageSize,productName})
 // //根据商品描述获取搜索商品分页列表
@@ -35,3 +40,11 @@ export const reqDeleteImg = (name)=>ajax(prefix+"/manage/img/delete",{name},"POS
 export const reqAddOrUpdateProduct = (product) => ajax(prefix+`/manage/product/${product._id?"update":"add"}`,product,"POST")
 //修改商品
 // export const reqUpdateProduct = (product) => ajax(prefix+"/manage/product/update","POST")
+//得到角色列表
+export const reqRoles = ()=>ajax(prefix+"/manage/role/list");
+//添加角色列表
+export const reqAddRole = (roleName)=>ajax(prefix+"/manage/role/add",{roleName},"POST");
+//更新角色列表
+export const reqUpdateRole = (role)=>ajax(prefix+"/manage/role/update",role,"POST");
+//获取用户列表
+export const reqUSers = ()=> ajax(prefix+"/manage/user/list");
