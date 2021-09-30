@@ -104,7 +104,7 @@ export default class ProductHome extends Component {
         );
         return (
             <Card title={title} extra={extra} >
-                <Table dataSource={products} columns={columns} border={true} rowKey="_id" pagination={{defaultPageSize:PAGE_SIZE,showQuickJumper:true,total:total,onChange:this.getProducts}} loading={loading}></Table>
+                <Table dataSource={products} columns={columns} border={true} rowKey="_id" pagination={{defaultPageSize:PAGE_SIZE,showQuickJumper:true,total:total,onChange:this.getProducts,current:this.pageNum}} loading={loading}></Table>
             </Card>
         )
     }

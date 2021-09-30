@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import {Form,Input,} from "antd"
-import PropTypes from "prop-types"
 const {Item} = Form;
 /**
  * 添加角色的Form组件

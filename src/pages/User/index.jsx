@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
-import { Card,Button,Modal,Input,Table, message } from 'antd'
+import { Card,Button,Modal,Table, message } from 'antd'
 import { formatDate } from '../../utils/dateUtils'
 import LinkButton from '../../components/LinkButton/LinkButton'
 import { PAGE_SIZE } from '../../utils/constant'
-import { reqUSers } from '../../api'
+import { reqUsers,reqDeleteUser, reqAddOrUpdateUser } from '../../api'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import UserForm from './UserForm'
+const {confirm} =Modal;
 export default class User extends Component {
     state={
         users:[],//所有用户列表
@@ -36,16 +39,41 @@ export default class User extends Component {
         },
         {
             title:"操作",
-            render:()=>{
+            width:160,
+            render:(user)=>{
                 return (
                     <span>
-                        <LinkButton>修改</LinkButton>&nbsp;&nbsp;
-                        <LinkButton>删除</LinkButton>
+                        <LinkButton onClick={()=>{this.showUpdate(user)}}>修改</LinkButton>
+                        <LinkButton onClick={()=>{this.deleteUser(user)}}>删除</LinkButton>
                     </span>
                 )
             }
         }
     ]
+    }
+    showAdd = ()=>{
+        this.user =null;
+        this.setState({isShow:true})
+    }
+    showUpdate = (user)=>{
+        this.user = user;
+        this.setState({isShow:true})
+    }
+    deleteUser = (user)=>{
+        confirm({
+            title:`确定删除${user.name}吗？`,
+            icon:<ExclamationCircleOutlined/>,
+            content:"",
+            onOk:async ()=>{
+                const res = await reqDeleteUser(user._id);
+                if(res.status===0){
+                    message.success("删除用户成功");
+                    this.getUsers();
+                }else{
+                    message.error("删除用户失败")
+                }
+            }
+        })
     }
     /**
      * 
@@ -58,8 +86,32 @@ export default class User extends Component {
         },{})
         this.roleNames = roleNames;
     }
+    addOrUpdateUser = async ()=>{
+        //1.收集数据
+        try{
+            this.setState({isShow:false});
+            const validate = await this.userform.form.validateFields()
+            this.userform.form.resetFields()
+            const user = validate;
+            //如果是更新需要指定_id属性
+            if(this.user&&this.user._id){
+                user._id = this.user._id;
+            }
+            //发请求
+            console.log(user);
+            const res = await reqAddOrUpdateUser(user)
+            if(res.status===0){
+                message.success(`${this.user?"修改":"添加"}用户成功`)
+                this.getUsers();
+            }else{
+                message.error(`${this.user?"修改":"添加"}用户失败`)
+            }
+        }catch(err){
+            message.error("请正确填写表单")
+        }
+    }
     getUsers = async ()=>{
-        const res = await reqUSers();
+        const res = await reqUsers();
         if(res.status===0){
             message.success("获取用户列表成功");
             const {users,roles} = res.data;
@@ -75,14 +127,17 @@ export default class User extends Component {
     }
     render() {
         const title = (
-            <Button type="primary">创建用户</Button>
+            <Button type="primary" onClick={this.showAdd}>创建用户</Button>
         )
-        const {users,isShow} = this.state;
-        const { columns} = this;
+        const {users,isShow,roles} = this.state;
+        const { columns,user} = this;
         return (
             <Card title={title}>
                 <Table bordered rowKey="_id" dataSource={users} columns={columns} pagination={{pageSize:PAGE_SIZE}}></Table>
-                <Modal title={"创建用户"} visible={isShow} onOk={this.addOrUpdateUser} onCancel={()=>{this.setState({isShow:false})}}></Modal>
+            
+                <Modal title={user?"修改用户":"创建用户"} visible={isShow} onOk={this.addOrUpdateUser} onCancel={()=>{this.setState({isShow:false});this.userform.form.resetFields()}}>
+                    <UserForm user={user} roles={roles} ref={c=>this.userform = c}></UserForm>
+                </Modal>
             </Card>
         )   
 

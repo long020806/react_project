@@ -7,7 +7,7 @@ const prefix = "/api1";
 //登录
 export const reqLogin  = (username,password) =>ajax("/api1/login",{username,password},"POST");
 //添加用户
-export const reqAddUser = (user)=>ajax("/api1/manage/user/add",user,"POST")
+export const reqAddOrUpdateUser = (user)=>ajax("/api1/manage/user/"+(user._id?"update":"add"),user,"POST")
 //查询天气
 export const reqWeather = (city)=>{return new Promise((resolve,reject)=>{
     resolve({dayPictureUrl:"http://api.map.baidu.com/images/weather/day/qing.png",weather:"晴"})
@@ -47,4 +47,6 @@ export const reqAddRole = (roleName)=>ajax(prefix+"/manage/role/add",{roleName},
 //更新角色列表
 export const reqUpdateRole = (role)=>ajax(prefix+"/manage/role/update",role,"POST");
 //获取用户列表
-export const reqUSers = ()=> ajax(prefix+"/manage/user/list");
+export const reqUsers = ()=> ajax(prefix+"/manage/user/list");
+//删除用户
+export const reqDeleteUser = (userId)=> ajax(prefix+"/manage/user/delete",{userId},"POST")
