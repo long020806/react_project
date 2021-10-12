@@ -12,6 +12,7 @@ import {ArrowLeftOutlined} from "@ant-design/icons"
 import { reqAddOrUpdateProduct, reqCategories } from '../../api';
 import PicturesWall from './PicturesWall';
 import RichTextEditor from './RichTextEditor';
+import MemoryUtils from '../../utils/MemoryUtils';
 const {Item} = Form;
 const {TextArea} = Input;
 /**
@@ -133,11 +134,14 @@ export default class ProductAddUpdate extends Component {
     componentDidMount(){
         this.getCategories("0");
     }
+    componentWillUnmount(){
+        MemoryUtils.product = {}
+    }
     UNSAFE_componentWillMount(){
         //取出携带的state
-        const product = this.props.location.state;//添加没有值，否则有
+        const product = MemoryUtils.product;//添加没有值，否则有
         //保存是否为更新的标识符
-        this.isUpdate = !!product;
+        this.isUpdate = !!product._id;
         this.product = product || {};//保存商品，如果没有则为{}，防止报错
     }
     render() {

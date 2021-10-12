@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import MemoryUtils from '../../utils/MemoryUtils'
 import {Redirect ,Switch,Route} from "react-router-dom"
 import {Layout} from 'antd'
 import LeftNav from '../../components/LeftNav/LeftNav'
@@ -12,24 +11,26 @@ import User from '../User';
 import Bar from '../Charts/Bar';
 import Line from '../Charts/Line';
 import Pie from '../Charts/Pie';
+import { connect } from 'react-redux'
+import NotFound from '../NotFound/NotFound'
 const {Footer,Sider,Content} = Layout;
 /**
  * 后台管理路由组件
  */
-export default class Admin extends Component {
+class Admin extends Component {
     state = {isCollapsed:true}
     toggleCollapsed = ()=>{
         const {isCollapsed} = this.state;
         this.setState({isCollapsed:!isCollapsed});
     }
     render() {
-        const {user} = MemoryUtils;
+        const {user} = this.props;
         const {isCollapsed} = this.state;
         if(!user||!user._id){
             return <Redirect to="/login"></Redirect>
         }
         return (
-        <Layout style={{height:"100%"}}>
+        <Layout style={{minHeight:"100%"}}>
             <Sider collapsed={isCollapsed} >
                 <LeftNav isCollapsed = {isCollapsed} toggleCollapsed={this.toggleCollapsed}></LeftNav>
             </Sider>
@@ -37,6 +38,7 @@ export default class Admin extends Component {
               <Header></Header>
               <Content style={{margin:20,backgroundColor:"#fff"}}>
                   <Switch>
+                      <Redirect exact={true} from="/" to="/home"></Redirect>
                       <Route path="/home" component={Home}></Route>
                       <Route path="/category" component={Category}></Route>
                       <Route path="/product" component={Product}></Route>
@@ -45,7 +47,7 @@ export default class Admin extends Component {
                       <Route path="/charts/bar" component={Bar}></Route>
                       <Route path="/charts/line" component={Line}></Route>
                       <Route path="/charts/pie" component={Pie}></Route>
-                      <Redirect to="/home"></Redirect>
+                      <Route component={NotFound}></Route>
                   </Switch>
               </Content>
               <Footer style={{textAlign:'center',color:"#ccc"}}>推荐使用谷歌浏览器，可以获得更佳的页面体验</Footer>
@@ -54,3 +56,7 @@ export default class Admin extends Component {
         )
     }
 }
+export default connect(
+    state=>({user:state.user}),
+    {}
+)(Admin)

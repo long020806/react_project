@@ -4,7 +4,9 @@ import logo from "../../assets/images/logo.png"
 import {Link,withRouter} from "react-router-dom"
 import {Menu} from "antd";
 import menuList from '../../config/menuConfig';
-import MemoryUtils from "../../utils/MemoryUtils"
+import { connect } from 'react-redux';
+import { setHeadTitle } from '../../redux/actions'
+
 const { SubMenu } = Menu;
 /**
  * 左侧导航组件
@@ -14,6 +16,10 @@ class LeftNav extends Component {
     getMenuNodes_map = (menuList)=>{
         const {pathname} = this.props.location;
         return menuList.map(item=>{
+            //刷新时确认头部header的title
+            if(item.key===pathname||pathname.indexOf(item.key)===0){
+                this.props.setHeadTitle(item.title);
+           }
             //如果当前角色有item权限
             if(this.hasAuth(item)){
                 if(item.children&&item.children.length!==0){
@@ -26,7 +32,7 @@ class LeftNav extends Component {
                     )
                 }else{
                     return (<Menu.Item key={item.key} icon={React.createElement(item.icon)}>
-                            <Link to={item.key}>{item.title}</Link>
+                            <Link to={item.key} onClick={()=>{this.props.setHeadTitle(item.title);}}>{item.title}</Link>
                         </Menu.Item>)
                 }
             }
@@ -37,8 +43,8 @@ class LeftNav extends Component {
      */
     hasAuth = (item)=>{
         const {key,isPublic} = item;
-        const menus = MemoryUtils.user.role.menus;
-        const username = MemoryUtils.user.username;
+        const menus = this.props.user.role.menus;
+        const username = this.props.user.username;
 
         /**
          * 如果当前角色是admin
@@ -66,7 +72,7 @@ class LeftNav extends Component {
             }else{
                 pre.push(
                     (<Menu.Item key={item.key} icon={React.createElement(item.icon)}>
-                                <Link to={item.key}>{item.title}</Link>
+                                <Link to={item.key} onClick={()=>{this.props.setHeadTitle(item.title);console.log(this.props.setHeadTitle)}}>{item.title}</Link>
                             </Menu.Item>)
                 )
             }
@@ -119,4 +125,7 @@ class LeftNav extends Component {
         )
     }
 }
-export default withRouter(LeftNav);
+export default connect(
+    (state)=>({user:state.user}),
+    {setHeadTitle}
+)(withRouter(LeftNav));

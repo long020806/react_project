@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import "./index.less"
 import { formatDate } from '../../utils/dateUtils'
-import MemoryUtils from '../../utils/MemoryUtils'
 import { reqWeather } from '../../api'
 import { withRouter } from 'react-router-dom'
 import menuList from '../../config/menuConfig'
 import LinkButton from '../LinkButton/LinkButton'
 import { Modal} from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import StorageUtils from "../../utils/StorageUtils"
+import { connect } from 'react-redux'
+import {logout} from "../../redux/actions"
 const { confirm } = Modal;
 /**
  * 头部组件
@@ -50,9 +50,7 @@ class Header extends Component {
             icon:<ExclamationCircleOutlined/>,
             content:"确定退出吗",
             onOk:()=>{
-                StorageUtils.removeUser();
-                MemoryUtils.user = {};
-                this.props.history.replace("/login")
+                this.props.logout();
             },
             onCancel:()=>{
                 console.log("cancel")
@@ -80,8 +78,8 @@ class Header extends Component {
     }
     render() {
         const {currentTime,dayPictureUrl,weather} = this.state;
-        const {username} = MemoryUtils.user;
-        const title = this.getTitle();
+        const {username} = this.props.user;
+        const title = this.props.headTitle;
         return (
             <div className="header">
                 <div className="header-top">
@@ -103,4 +101,7 @@ class Header extends Component {
         )
     }
 }
-export default withRouter(Header)
+export default connect(
+    (state)=>({headTitle:state.headTitle,user:state.user}),
+    {logout}
+)(withRouter(Header))

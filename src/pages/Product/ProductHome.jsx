@@ -4,6 +4,7 @@ import {PlusOutlined} from '@ant-design/icons'
 import LinkButton from '../../components/LinkButton/LinkButton'
 import { reqProducts,reqSearchProducts, reqUpdateStatus } from '../../api'
 import { PAGE_SIZE } from '../../utils/constant'
+import MemoryUtils from '../../utils/MemoryUtils'
 const {Option} = Select
 
 export default class ProductHome extends Component {
@@ -52,13 +53,22 @@ export default class ProductHome extends Component {
             width:90,
             render:(product)=>(
                 <span>
-                    <LinkButton onClick={()=>{this.props.history.push("/product/detail",{product})}}>详情</LinkButton>
-                    <LinkButton onClick={()=>{this.props.history.push("/product/addupdate",product)}}>修改</LinkButton>
+                    <LinkButton onClick={()=>this.showDeatail(product)}>详情</LinkButton>
+                    <LinkButton onClick={()=>this.showUpdate(product)}>修改</LinkButton>
                 </span>
             )
         }]
     }
-
+    showDeatail = (product)=>{
+        //缓存product => Detail使用
+        MemoryUtils.product = product;
+        this.props.history.push("/product/detail");
+    }
+    showUpdate = (product)=>{
+        //缓存product => Editor使用
+        MemoryUtils.product = product;
+        this.props.history.push("/product/detail");
+    }
     getProducts = async (pageNum)=>{
         this.pageNum = pageNum;//保存pageNum 方便后面使用
         this.setState({loading:true});

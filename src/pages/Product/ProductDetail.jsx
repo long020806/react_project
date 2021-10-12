@@ -3,6 +3,7 @@ import { Card,List, } from 'antd'
 import {ArrowLeftOutlined} from "@ant-design/icons"
 import LinkButton from '../../components/LinkButton/LinkButton';
 import { reqCategory } from '../../api';
+import MemoryUtils from '../../utils/MemoryUtils';
 const {Item} = List;
 
 /**
@@ -14,7 +15,7 @@ export default class ProductDetail extends Component {
         cName2:"",//二级分类名称
     }
     async componentDidMount(){
-        const {pCategoryId,categoryId} = this.props.location.state.product;
+        const {pCategoryId,categoryId} = MemoryUtils.product;
         if(pCategoryId==="0"){//一级分类下的商品
           const res = await reqCategory(categoryId)  
           const cName1 = res.data.name;
@@ -30,8 +31,11 @@ export default class ProductDetail extends Component {
             this.setState({cName1,cName2});
         }
     }
+    componentWillUnmount(){
+        MemoryUtils.product = {}
+    }
     render() {
-        const {product} = this.props.location.state;
+        const {product} = MemoryUtils;
         const {cName1,cName2} = this.state;
         const title = (
             <span>
