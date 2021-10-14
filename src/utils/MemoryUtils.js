@@ -3,6 +3,6 @@
  */
 const MemoryUtils = {
     user:{},
-    peoduct:{},
+    product:{},
 }
 export default MemoryUtils;
